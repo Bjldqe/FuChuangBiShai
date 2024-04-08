@@ -2,20 +2,24 @@ import numpy as np
 import cv2
 import os
 import pandas as pd
+import xml
 #图片路径
-file_path = '../data/images/'
-data_label=pd.read_csv('../data/rock_label.csv',encoding='gbk')
+file_path = '../data/data/images'
+data_label_path='../data/tmp/train_xmls'
+
 img_width=[]
 img_hight=[]
 dimen=[]
-for i in os.listdir(file_path):
-    image=cv2.imread(file_path+i)
+for i in os.listdir(data_label_path):
+    xml_tree=xml.etree.ElementTree.parse(i)
     #查看图片尺寸
-    h,w,d = image.shape
+    h=int(xml_tree.find("annotation").find("size").find("height").text)
+    w=int(xml_tree.find("annotation").find("size").find("width").text)
+    d=int(xml_tree.find("annotation").find("size").find("depth").text)
     #依次保存所有图像高
     img_hight.append(h)# 高
     img_width.append(w)#宽
-    dimen.append(d)
+    dimen.append(d))
 #图片像素大小探索数据
 img_hight = pd.DataFrame(img_hight, columns=list({'hight'}))
 img_width = pd.DataFrame(img_width, columns=list({'width'}))#保存为数据框形式并设置列索引
@@ -38,8 +42,6 @@ plt.savefig('../tmp/饼图.jpg',dpi=3090)
 
 
 
-import os
-import pandas as pd
 #导入标签值
 data_label=pd.read_csv('../data/rock_label.csv',encoding='gbk')
 file_path = '../data/images/' #原始数据文件夹
